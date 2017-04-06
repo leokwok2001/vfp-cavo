@@ -1,0 +1,44 @@
+jfax('12345678') && 先通知 winfax 
+
+set devi to printer 
+set printer to NAME WinFax 
+
+@ 0,0 say 'Hi this fax test' 
+set printer to 
+set devi to screen 
+retu .Y. 
+
+
+*/// 
+*/ 
+*/// 
+func jFax 
+para vfax 
+local vFaxChan, vRetVar, vreci 
+
+set mark to '/' 
+set date to AMERICAN 
+SET CENT OFF 
+vreci = 'recipient("' + trim(vfax)+ '","' + time(vfax) +'","'+ dtoc(date()) + '")' 
+set mark to '.' 
+set date to TAIWAN 
+SET CENT ON 
+
+vFaxChan = DDEInitiate("FAXMNG32","CONTROL") 
+if vFaxChan = -1 
+sure('無法建立傳真通道') 
+retu .F. 
+endif 
+
+vRetVar = DDEExecute(vFaxChan,"GoIdle") 
+vFaxChan = DDEInitiate("FAXMNG32","TRANSMIT") 
+vRetVar = DDEPoke(vFaxChan,"sendfax", vreci) 
+vRetVar = DDEPoke(vFaxChan,"sendfax", 'resolution("HIGH")') 
+vRetVar = DDEExecute(vFaxChan,"GoActive") 
+vRetVar = DDEPoke(vFaxChan,"sendfax", 'showsendscreen("0")') 
+vRetVar = DDEPoke(vFaxChan,"sendfax", "SenFaxUI") 
+&& if file('SndBak.Msg') 
+&& vRetvar = DDEPoke(vFaxChan,"sendfax", 'attach("C:\WJM\SndBak.Msg")') 
+&& endif 
+vRetVar = DDETerminate(vFaxChan) 
+retu .T.

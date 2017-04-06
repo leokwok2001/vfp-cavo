@@ -1,0 +1,23 @@
+**Demo call for Print2PDF
+set echo off
+set talk off
+set safety off
+SET PATH TO
+SET EXACT off
+CLEAR ALL
+CLOSE ALL
+SET PROCEDURE TO
+SET CLASSLIB TO 
+
+SET DEFAULT TO "c:\cavo\print2pdf"
+SET PATH to "c:\cavo\print2pdf,c:\gs\gs8.11\bin,c:\CAVO"
+
+set procedure to print2pdf.prg
+
+do print2pdf with "c:\cavo\p2demo.pdf", "p2demo2.frx"
+
+if file("p2demo.pdf")
+	=messagebox("Print2PDF created the file 'P2Demo.pdf'", 48, "Success!")
+else
+	=messagebox("Print2PDF Failed!", 16, "Sorry")
+endif

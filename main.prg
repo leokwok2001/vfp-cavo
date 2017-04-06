@@ -1,0 +1,128 @@
+*!*	Declare Integer GetActiveWindow 	In Win32API
+*!*	Declare Integer GetWindow In Win32API 	Integer HWnd, Integer nType
+*!*	Declare Integer GetWindowText In Win32API  Integer HWnd, String @cText, Integer nType
+*!*	Declare Integer BringWindowToTop In Win32API Integer HWnd
+*!*	lcquick = 0
+*!*	lnHand = IsRunning("飛揚興業有限公司-CAVO INDUSTRIES COMPANY LIMITED")
+*!*	If lnHand = 0
+lcquick = 0
+*!*	Else
+*!*		BringWindowToTop(lnHand)
+*!*		lcquick = 1
+*!*	Endif
+
+If lcquick = 0
+	Do SETENV
+**	ServerName = "USER-HP\MSSQL2012EXPRESS"
+	ServerName = "Server02"
+
+&&	ServerName = "SERVER02\SQL"
+&&ServerName = "USER-HP\SQL2005"
+&&ServerName = "LEO-COM"
+	UNAME = 'sa'
+	LCPW = 'Cavo2428'
+
+**	UNAME = 'sa'
+**	LCPW = 'abc'
+
+	Wait Window "CONNECTING TO SQL "+ ServerName+"  ......" Nowait
+
+	lcDSNname  = "CAVO"
+	_Screen.Icon = "CAVO.ICO"
+	oJOB_CSconn = Sqlstringconnect("network=DBMSSOCN;AutoTranslate=No;driver={SQL Server};server="+ServerName+";database="+lcDSNname+";uid="+UNAME+";pwd="+LCPW)
+	Wait Clear
+	If oJOB_CSconn = -2
+		Wait Window "不能連接到 SQL SERVER." +ServerName+ " 系統將被關閉."
+		Return
+	Endif
+&&On Error Do emptyprg
+	Set Status Bar Off
+	Do Form login
+	If lclogin = .F.
+		Do endprog.prg
+	Else
+		_Screen.Caption = "飛揚興業有限公司-CAVO INDUSTRIES COMPANY LIMITED"&&lcSysNameS + " - " + lcSysNameL
+		Do Menu.mpr
+		If Type('_screen.container2') = 'U'
+			container1= Createobject('container2')
+			_Screen.AddObject('container1','container2')
+		Endif
+		_Screen.container1.Visible = .T.
+		_Screen.container1.Enabled =.T.
+		_Screen.container1.Left = 0
+		_Screen.container1.Top = 0
+		Read Events
+	Endif
+
+	Wait Window "DISCONNECTING FROM SQL" +ServerName+" ......" Nowait
+	=SQLDisconnect(oJOB_CSconn)
+	Wait Clear
+	Release lnOK, lnCANCEL , lcCurLanguage , lcCurPath , lcDefaPath , gcToolbar
+Endif
+
+Function Hdl_comma
+Parameters  ParaValue
+lcHdl_comma=Strtran(ParaValue ,"'","''")
+Return lcHdl_comma
+Endfunc
+
+Function Hdl_date
+Parameters lcdate
+sday = Alltrim(Str(Day(lcdate )))
+smonth = Alltrim(Str(Month(lcdate)))
+syear = Alltrim(Str(Year(lcdate)))
+If Len(Alltrim(sday)) == 1 Then
+	sday = "0"+sday
+Endif
+If Len(Alltrim(smonth)) == 1 Then
+	smonth = "0"+smonth
+Endif
+lchdl_date = syear +"-" + smonth + "-" + sday
+Return lchdl_date
+Endfunc
+
+
+
+Function Hdl_datev2
+Parameters lcdate
+sday = Alltrim(Str(Day(lcdate )))
+smonth = Alltrim(Str(Month(lcdate)))
+syear = Alltrim(Str(Year(lcdate)))
+If Len(Alltrim(sday)) == 1 Then
+	sday = "0"+sday
+Endif
+If Len(Alltrim(smonth)) == 1 Then
+	smonth = "0"+smonth
+Endif
+lchdl_date = sday+"-" + smonth + "-" + syear
+Return lchdl_date
+Endfunc
+
+
+Procedure emptyprg
+Return
+
+*!*	Function IsRunning
+*!*	Lparameter tcTitle
+*!*	hNext = GetActiveWindow()
+
+*!*	Do While hNext<>0
+*!*		cText = Replicate(Chr(0),80)
+*!*		GetWindowText(hNext,@cText,80)
+*!*		If Upper(Alltrim(tcTitle)) $ Upper(cText)
+*!*			Return hNext
+*!*		Endif
+*!*		hNext = GetWindow(hNext,2)
+*!*	Enddo
+*!*	Return 0
+*!*	Endfunc
+
+Define Class  xdaterange As Custom
+
+**name = .f.
+	Dimension ArrayName[100,10]
+
+**sex = .f.
+	asize = 0
+
+Enddefine
